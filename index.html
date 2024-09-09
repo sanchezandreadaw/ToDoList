@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas pendientes</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-800 text-gray-100 min-h-screen flex flex-col">
+
+    <header class="text-white py-7 shadow-lg bg-gray-800">
+        <div class="container mx-auto flex items-center justify-center gap-3 px-6">
+            <h1 class="text-4xl font-bold">To-Do List App</h1>
+            <i class="fas fa-clipboard text-4xl"></i>
+
+            <button
+                class="bg-blue-500 relative left-10 text-white py-3 px-6 rounded-full text-xl font-semibold shadow-md
+                hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out w-52"
+                id="btnResetApp">
+                Resetear App
+                <div class="tooltip-container">
+                    <span class="tooltip-text">Se eliminarán todas las tareas y se resetearán los valores del los formularios</span>
+                </div>
+            </button>
+        </div>
+    </header>
+  
+    <!--modal-->
+<div id="alert-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden flex items-center justify-center">
+    <div id="modal-content" class="rounded-lg shadow-lg max-w-full w-auto p-6 relative bg-white">
+        <p id="modal-message" class="text-gray-800 text-xl break-words"></p>
+        <button id="modal-close" class="absolute top-2 right-2 text-gray-800">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+
+
+    <main class="container mx-auto px-6 py-6 flex flex-col gap-6">
+
+        <!-- Sección de Tabla y Gráfico -->
+        <section class="flex justify-center gap-3">
+            <!-- Tabla -->
+            <div id="contenedorLista" class=" w-full bg-gray-900 p-6 rounded-lg shadow-xl space-y-4">
+                <div id="table-container"></div>
+            </div>
+            <!-- Sección para porcentaje de tareas -->
+            <div class="w-96 h-64 bg-gray-900 p-6 rounded-lg shadow-xl space-y-4">
+                <div id="porcentajeContainer" class="flex flex-col items-center">
+                    <p class="text-xl text-white bg-gray-800 py-2 px-4 rounded-full mb-4">Tareas completadas</p>
+                    <div class="relative flex items-center justify-center">
+                        <div class="w-32 h-32 rounded-full border-8 border-gray-700 flex items-center justify-center">
+                            <div class="absolute w-24 h-24 rounded-full flex items-center justify-center bg-gray-800">
+                                <h2 id="percentage-display" class="text-2xl text-white font-bold">0%</h2>
+                            </div>
+                        </div>
+                        <svg class="absolute w-32 h-32 transform rotate-90" viewBox="0 0 100 100">
+                            <circle id="progress-circle" cx="50" cy="50" r="45" stroke="#3b82f6" stroke-width="10" fill="none"
+                                stroke-dasharray="283" stroke-dashoffset="283"></circle>
+                        </svg>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formularios -->
+        <section class="flex flex-wrap justify-stretch gap-4">
+            <!-- Formulario Nueva Tarea -->
+            <div class="w-full max-w-xl">
+                <form id="task-form" class="bg-gray-900 px-6 py-6 shadow-xl rounded-lg space-y-4">
+                    <div class="text-white py-3 px-4 rounded-lg flex items-center gap-2">
+                        <h2 class="text-xl font-semibold">Nueva Tarea</h2>
+                        <i class="fas fa-file-signature text-xl"></i>
+                    </div>
+                    <div>
+                        <label for="nombre" class="block text-gray-300 text-sm font-semibold mb-2">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre de la tarea"
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+
+                    <div>
+                        <label for="fecha" class="block text-gray-300 text-sm font-semibold mb-2">Fecha</label>
+                        <input type="date" id="fecha" name="fecha" placeholder="Fecha de la tarea"
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+
+                    <div>
+                        <label for="prioridad" class="block text-gray-300 text-sm font-semibold mb-2">Prioridad</label>
+                        <input type="text" id="prioridad" name="prioridad" placeholder="Alta, media o baja"
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="submit" id="btnAddTask" disabled
+                            class="flex-grow p-2 bg-gray-700 text-white rounded-lg flex items-center justify-center gap-2">
+                            Añadir tarea <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="reset"
+                            class="flex-grow p-2 bg-gray-700 text-white rounded-lg flex items-center justify-center gap-2
+                             hover:bg-gray-600 transition duration-300 ease-in-out" id="resetAdd">
+                            Resetear <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Formulario Editar Tarea -->
+            <div class="w-full max-w-xl">
+                <form id="editTask-form" class="bg-gray-900 px-6 py-6 shadow-xl rounded-lg space-y-4">
+                    <div class="bg-teal-800 text-white py-3 px-4 rounded-lg flex items-center gap-2">
+                        <h2 class="text-xl font-semibold">Editar tarea</h2>
+                        <i class="fas fa-file-signature text-xl"></i>
+                    </div>
+                    <div>
+                        <label for="nombreEdit" class="block text-gray-300 text-sm font-semibold mb-2">Nombre</label>
+                        <input type="text" id="nombreEdit" name="nombreEdit" placeholder="Nombre de la tarea" readonly
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+
+                    <div>
+                        <label for="fechaEdit" class="block text-gray-300 text-sm font-semibold mb-2">Fecha</label>
+                        <input type="date" id="fechaEdit" name="fechaEdit" placeholder="Fecha de la tarea" readonly
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+
+                    <div>
+                        <label for="prioridadEdit"
+                            class="block text-gray-300 text-sm font-semibold mb-2">Prioridad</label>
+                        <input type="text" id="prioridadEdit" name="prioridadEdit" placeholder="Alta, media o baja"
+                            readonly
+                            class="w-full text-lg p-4 border border-gray-600 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 ease-in-out">
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="submit" id="btnEditTask" disabled
+                            class="flex-grow p-2 bg-gray-700 text-white rounded-lg flex items-center justify-center gap-2">
+                            Editar tarea <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="reset"
+                            class="flex-grow p-2 bg-gray-700 text-white rounded-lg flex items-center justify-center gap-2
+                             hover:bg-gray-600 transition duration-300 ease-in-out" id="resetEdit">
+                            Resetear <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/app.js" type="module"></script>
+    <noscript>JavaScript está deshabilitado. Algunas funciones podrían no funcionar correctamente.</noscript>
+</body>
+
+</html>
